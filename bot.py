@@ -38,8 +38,8 @@ async def on_message(msg):
         if kw in msg.content:
             matched_ids.extend(ids)
 
-    # 一致があれば30%の確率で反応して返信
-    if matched_ids and random.random() < 0.5:  # 30% の確率で反応
+    # 一致があれば10%の確率で反応して返信
+    if matched_ids and random.random() < 0.1:  # 10% の確率で反応
         selected_id = random.choice(matched_ids)
         quote = quotes.get(selected_id, "（該当する語録が見つかりませんでした）")
         embed = discord.Embed(description=quote, color=0x1abc9c)
