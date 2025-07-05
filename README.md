@@ -1,2 +1,2 @@
 # CQbot
-A Discord Bot to help you learn socialist ideas
+It responds to specific keywords with revolutionary quotes.
