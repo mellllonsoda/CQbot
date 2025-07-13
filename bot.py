@@ -3,6 +3,7 @@ import json
 import random
 from dotenv import load_dotenv
 import discord
+from discord import app_commands
 import logging
 
 # .envファイルからトークンを読み込み
@@ -15,6 +16,7 @@ intents.message_content = True
 
 # クライアント作成
 bot = discord.Client(intents=intents)
+tree = app_commands.CommandTree(bot)
 
 # 語録とキーワードの読み込み
 with open("quotes.json", encoding="utf-8") as f:
@@ -22,9 +24,26 @@ with open("quotes.json", encoding="utf-8") as f:
 with open("keywords.json", encoding="utf-8") as f:
     keywords = json.load(f)
 
+@tree.command(name="random_quote", description="ランダムに☭革命的☭な名言を出す")
+async def test_command(interaction: discord.Interaction):
+    random_id = random.choice(list(quotes.keys()))
+    quote = quotes[random_id]
+    embed = discord.Embed(description=quote, color=0x1abc9c)
+
+    # まず応答を遅延(defer)させる
+    await interaction.response.defer()
+
+    # フォローアップメッセージとして送信し、メッセージオブジェクトを取得
+    message = await interaction.followup.send(embed=embed)
+
+    # 取得したメッセージにリアクションを付ける
+    await message.add_reaction("❌")
+
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
+    await tree.sync()
+    print(f"スラッシュコマンドを同期しました")
 
 @bot.event
 async def on_message(msg):
