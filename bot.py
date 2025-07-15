@@ -36,9 +36,6 @@ async def test_command(interaction: discord.Interaction):
     # フォローアップメッセージとして送信し、メッセージオブジェクトを取得
     message = await interaction.followup.send(embed=embed)
 
-    # 取得したメッセージにリアクションを付ける
-    await message.add_reaction("❌")
-
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
@@ -49,7 +46,7 @@ async def on_ready():
 async def on_message(msg):
     # Botの発言は無視
     if msg.author.bot:
-        return
+        await msg.add_reaction("❌")
 
     matched_ids = []
 
@@ -63,9 +60,8 @@ async def on_message(msg):
         selected_id = random.choice(matched_ids)
         quote = quotes.get(selected_id, "（該当する語録が見つかりませんでした）")
         embed = discord.Embed(description=quote, color=0x1abc9c)
-        reply_msg = await msg.reply(embed=embed)
-        await reply_msg.add_reaction("❌")
-
+        await msg.channel.send(embed=embed)
+        
 @bot.event
 async def on_reaction_add(reaction, user):
     if user.bot:
