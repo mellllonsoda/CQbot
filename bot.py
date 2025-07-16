@@ -22,7 +22,7 @@ tree = app_commands.CommandTree(bot)
 with open("quotes.json", encoding="utf-8") as f:
     quotes = json.load(f)
 with open("keywords.json", encoding="utf-8") as f:
-    keywords = json.load(f)
+    keywords = json.load(f)    
 
 @tree.command(name="random_quote", description="ランダムに☭革命的☭な名言を出す")
 async def test_command(interaction: discord.Interaction):
@@ -64,9 +64,8 @@ async def on_message(msg):
         
 @bot.event
 async def on_reaction_add(reaction, user):
-    if user.bot:
-        return
-
+    if msg.author == bot.user:
+        await msg.add_reaction("❌")
     if str(reaction.emoji) == "❌":
         try:
             await reaction.message.delete()
