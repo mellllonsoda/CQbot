@@ -44,19 +44,20 @@ async def on_ready():
 
 @bot.event
 async def on_message(msg):
-    # Botの発言は無視
-    if msg.author.bot:
+    # Bot自身の発言には❌リアクションをつける
+    if msg.author == bot.user:
         await msg.add_reaction("❌")
+        return  # 自分の発言はそれだけで終了
 
     matched_ids = []
 
-    # メッセージに含まれるキーワードに対応する語録IDを集める
+    # ユーザーのメッセージからキーワードを探す
     for kw, ids in keywords.items():
         if kw in msg.content:
             matched_ids.extend(ids)
 
-    # 一致があれば10%の確率で反応して返信
-    if matched_ids and random.random() < 0.1:  # 10% の確率で反応
+    # 一致があれば10%の確率で反応
+    if matched_ids and random.random() < 0.1:
         selected_id = random.choice(matched_ids)
         quote = quotes.get(selected_id, "（該当する語録が見つかりませんでした）")
         embed = discord.Embed(description=quote, color=0x1abc9c)
@@ -64,8 +65,8 @@ async def on_message(msg):
         
 @bot.event
 async def on_reaction_add(reaction, user):
-    if msg.author == bot.user:
-        await msg.add_reaction("❌")
+    if user.bot:
+        return
     if str(reaction.emoji) == "❌":
         try:
             await reaction.message.delete()
