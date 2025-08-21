@@ -24,7 +24,10 @@ with open("quotes.json", encoding="utf-8") as f:
 with open("keywords.json", encoding="utf-8") as f:
     keywords = json.load(f)    
 
-@tree.command(name="random_quote", description="ランダムに☭革命的☭な名言を出す")
+@tree.command(
+    name="random_quote",
+    description="ランダムに☭革命的☭な名言を出す",
+)
 async def test_command(interaction: discord.Interaction):
     random_id = random.choice(list(quotes.keys()))
     quote = quotes[random_id]
@@ -36,11 +39,19 @@ async def test_command(interaction: discord.Interaction):
     # フォローアップメッセージとして送信し、メッセージオブジェクトを取得
     message = await interaction.followup.send(embed=embed)
 
+@tree.command(
+    name="revolutionized",
+    description="入力を☭革命的☭に変換する",
+)
+async def revolutionized(interaction: discord.Interaction, message: str):
+    transformed = "☆".join(message)
+    await interaction.response.send_message(f"🔴☭{transformed}☭🔴",ephemeral=True)
+
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
-    await tree.sync()
     print(f"スラッシュコマンドを同期しました")
+    await tree.sync()
 
 @bot.event
 async def on_message(msg):
