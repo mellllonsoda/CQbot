@@ -5,10 +5,14 @@ from dotenv import load_dotenv
 import discord
 from discord import app_commands
 import logging
+import time
 
 # .envファイルからトークンを読み込み
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
+
+GUILD_ID = 1387329962691792977  # 対象サーバーのID
+guild = discord.Object(id=GUILD_ID)
 
 # 必要なIntentの設定
 intents = discord.Intents.default()
@@ -27,6 +31,7 @@ with open("keywords.json", encoding="utf-8") as f:
 @tree.command(
     name="random_quote",
     description="ランダムに☭革命的☭な名言を出す",
+    guild=guild
 )
 async def test_command(interaction: discord.Interaction):
     random_id = random.choice(list(quotes.keys()))
@@ -42,16 +47,29 @@ async def test_command(interaction: discord.Interaction):
 @tree.command(
     name="revolutionized",
     description="入力を☭革命的☭に変換する",
+    guild=guild
 )
 async def revolutionized(interaction: discord.Interaction, message: str):
     transformed = "☆".join(message)
     await interaction.response.send_message(f"🔴☭{transformed}☭🔴",ephemeral=True)
 
+@tree.command(
+    name="ping",
+    description="Bot の応答速度を測定",
+    guild=guild
+)
+async def ping(interaction: discord.Interaction):
+    start = time.perf_counter()
+    await interaction.response.send_message("Pinging...")
+    end = time.perf_counter()
+    latency_ms = (end - start) * 1000
+    await interaction.followup.send(f"Pong! レイテンシ: {latency_ms:.2f}ms")
+
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
     print(f"スラッシュコマンドを同期しました")
-    await tree.sync()
+    await tree.sync(guild=guild)
 
 @bot.event
 async def on_message(msg):
